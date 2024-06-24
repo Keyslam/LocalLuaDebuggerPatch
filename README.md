@@ -17,10 +17,25 @@ In my opinion, if a `error` is caught by some other piece of code, there's no ne
 This library adds a quick monkeypatch to `pcall`, `xpcall`, `assert`, and `error` to prevent this behaviour.
 
 ### Usage
-Simply add this library to your project and require it instead of `lldebugger`:
+Simply add this library to your project, require it (instead of `lldebugger`) and call start on it:
 ```lua
-local lldebugger = require("path.to.this.library")()
--- Or when using LÖVE:
-local lldebuger == require("path.to.this.library")(true)
+local lldebuggerPatcher = require("path.to.this.library")
+local lldebugger = lldebuggerPatcher.start()
 ```
 It will in turn call `require("lldebugger").start()` and return it.
+
+When using LÖVE, also call `lldebuggerPatcher.useLove()` at the end of your `main.lua`:
+```lua
+local lldebuggerPatcher = require("path.to.this.library")
+local lldebugger = lldebuggerPatcher.start()
+
+function love.errorhandler(msg)
+    error(msg, 2)
+end
+
+function love.update()
+    -- ...
+end
+
+lldebuggerPatcher.useLove()
+```

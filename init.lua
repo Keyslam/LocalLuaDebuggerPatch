@@ -1,10 +1,10 @@
-return function(isLove)
+local protectedContextCount = 0
+
+local function start()
     local pcall_old = pcall
     local xpcall_old = xpcall
     local error_old = error
     local assert_old = assert
-
-    local protectedContextCount = isLove and -1 or 1
 
     _G.pcall = function(...)
         protectedContextCount = protectedContextCount + 1
@@ -44,3 +44,12 @@ return function(isLove)
 
     return lldebugger
 end
+
+local function useLove()
+    protectedContextCount = protectedContextCount - 1
+end
+
+return {
+    start = start,
+    useLove = useLove
+}
